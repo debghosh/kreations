@@ -4,6 +4,8 @@ import Navigation from './components/Navigation';
 import Footer from './components/Footer';
 import HomePage from './pages/HomePage';
 import PortfolioPage from './pages/PortfolioPage';
+import ProfilePage from './pages/ProfilePage';
+import ItemDetailPage from './pages/ItemDetailPage';
 import AdminDashboard from './pages/AdminDashboard';
 
 // Import other pages (simplified versions for file size)
@@ -42,6 +44,20 @@ const App = () => {
           {currentView === 'portfolio' && (
             <PortfolioPage 
               setSelectedItem={setSelectedItem}
+              setCurrentView={setCurrentView}
+            />
+          )}
+
+          {currentView === 'profile' && (
+            <ProfilePage
+              setSelectedItem={setSelectedItem}
+              setCurrentView={setCurrentView}
+            />
+          )}
+
+          {currentView === 'item-detail' && (
+            <ItemDetailPage
+              item={selectedItem}
               setCurrentView={setCurrentView}
             />
           )}

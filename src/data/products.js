@@ -215,7 +215,8 @@ export const SAMPLE_ITEMS = {
 };
 
 export const getAllItems = () => {
-  return [...SAMPLE_ITEMS.wax, ...SAMPLE_ITEMS.resin];
+  // Load from cache which may have been updated from localStorage
+  return [...(productsCache.wax || []), ...(productsCache.resin || [])];
 };
 
 export const getItemById = (id) => {
@@ -224,9 +225,63 @@ export const getItemById = (id) => {
 
 export const getItemsByCategory = (category) => {
   if (category === 'all') return getAllItems();
-  return SAMPLE_ITEMS[category] || [];
+  return productsCache[category] || [];
 };
 
 export const getFeaturedItems = () => {
   return getAllItems().filter(item => item.featured);
 };
+
+// Product management functions (for admin)
+let productsCache = { ...SAMPLE_ITEMS };
+
+export const addProduct = (product) => {
+  const category = product.category;
+  if (!productsCache[category]) {
+    productsCache[category] = [];
+  }
+  productsCache[category] = [...productsCache[category], product];
+  // Save to localStorage
+  localStorage.setItem('products', JSON.stringify(productsCache));
+  return product;
+};
+
+export const deleteProduct = (productId) => {
+  Object.keys(productsCache).forEach(category => {
+    productsCache[category] = productsCache[category].filter(p => p.id !== productId);
+  });
+  localStorage.setItem('products', JSON.stringify(productsCache));
+};
+
+export const updateProduct = (productId, updates) => {
+  Object.keys(productsCache).forEach(category => {
+    productsCache[category] = productsCache[category].map(p =>
+      p.id === productId ? { ...p, ...updates } : p
+    );
+  });
+  localStorage.setItem('products', JSON.stringify(productsCache));
+};
+
+export const loadProductsFromStorage = () => {
+  const stored = localStorage.getItem('products');
+  if (stored) {
+    productsCache = JSON.parse(stored);
+  }
+  return productsCache;
+};
+
+export const resetProducts = () => {
+  productsCache = { ...SAMPLE_ITEMS };
+  localStorage.setItem('products', JSON.stringify(productsCache));
+  return productsCache;
+};
+
+// Initialize products from storage on load
+if (typeof window !== 'undefined') {
+  const stored = localStorage.getItem('products');
+  if (stored) {
+    productsCache = JSON.parse(stored);
+  } else {
+    localStorage.setItem('products', JSON.stringify(SAMPLE_ITEMS));
+  }
+}

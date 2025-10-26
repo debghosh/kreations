@@ -5,7 +5,9 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [favorites, setFavorites] = useState([]);
+  const [savedItems, setSavedItems] = useState([]);
   const [collections, setCollections] = useState([]);
+  const [adminCollections, setAdminCollections] = useState([]);
 
   const login = (email, password, role = 'subscriber') => {
     const userData = { 
@@ -27,10 +29,14 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setUser(null);
     setFavorites([]);
+    setSavedItems([]);
     setCollections([]);
+    setAdminCollections([]);
     localStorage.removeItem('user');
     localStorage.removeItem('favorites');
+    localStorage.removeItem('savedItems');
     localStorage.removeItem('collections');
+    localStorage.removeItem('adminCollections');
     return true; // Return flag for redirect
   };
 
@@ -44,36 +50,112 @@ export const AuthProvider = ({ children }) => {
     });
   };
 
-  const addToCollection = (collectionName, itemId) => {
+  const toggleSaved = (itemId) => {
+    setSavedItems(prev => {
+      const newSaved = prev.includes(itemId)
+        ? prev.filter(id => id !== itemId)
+        : [...prev, itemId];
+      localStorage.setItem('savedItems', JSON.stringify(newSaved));
+      return newSaved;
+    });
+  };
+
+  const createUserCollection = (name, itemIds = []) => {
+    const newCollection = {
+      id: `user-${Date.now()}`,
+      name,
+      items: itemIds,
+      createdBy: user?.id,
+      createdAt: new Date().toISOString(),
+      isUserCreated: true
+    };
     setCollections(prev => {
-      const collection = prev.find(c => c.name === collectionName);
-      let newCollections;
-      if (collection) {
-        newCollections = prev.map(c => 
-          c.name === collectionName 
-            ? { ...c, items: [...new Set([...c.items, itemId])] }
-            : c
-        );
-      } else {
-        newCollections = [...prev, { 
-          name: collectionName, 
-          items: [itemId], 
-          createdAt: new Date().toISOString() 
-        }];
-      }
-      localStorage.setItem('collections', JSON.stringify(newCollections));
-      return newCollections;
+      const updated = [...prev, newCollection];
+      localStorage.setItem('collections', JSON.stringify(updated));
+      return updated;
+    });
+    return newCollection;
+  };
+
+  const deleteUserCollection = (collectionId) => {
+    setCollections(prev => {
+      const updated = prev.filter(c => c.id !== collectionId);
+      localStorage.setItem('collections', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const addItemToUserCollection = (collectionId, itemId) => {
+    setCollections(prev => {
+      const updated = prev.map(c => 
+        c.id === collectionId 
+          ? { ...c, items: [...new Set([...c.items, itemId])] }
+          : c
+      );
+      localStorage.setItem('collections', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const removeItemFromUserCollection = (collectionId, itemId) => {
+    setCollections(prev => {
+      const updated = prev.map(c =>
+        c.id === collectionId
+          ? { ...c, items: c.items.filter(id => id !== itemId) }
+          : c
+      );
+      localStorage.setItem('collections', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const createAdminCollection = (name, itemIds = [], featured = false) => {
+    const newCollection = {
+      id: `admin-${Date.now()}`,
+      name,
+      items: itemIds,
+      featured,
+      createdAt: new Date().toISOString(),
+      isAdminCollection: true
+    };
+    setAdminCollections(prev => {
+      const updated = [...prev, newCollection];
+      localStorage.setItem('adminCollections', JSON.stringify(updated));
+      return updated;
+    });
+    return newCollection;
+  };
+
+  const deleteAdminCollection = (collectionId) => {
+    setAdminCollections(prev => {
+      const updated = prev.filter(c => c.id !== collectionId);
+      localStorage.setItem('adminCollections', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const updateAdminCollection = (collectionId, updates) => {
+    setAdminCollections(prev => {
+      const updated = prev.map(c =>
+        c.id === collectionId ? { ...c, ...updates } : c
+      );
+      localStorage.setItem('adminCollections', JSON.stringify(updated));
+      return updated;
     });
   };
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     const storedFavorites = localStorage.getItem('favorites');
+    const storedSavedItems = localStorage.getItem('savedItems');
     const storedCollections = localStorage.getItem('collections');
+    const storedAdminCollections = localStorage.getItem('adminCollections');
     
     if (storedUser) setUser(JSON.parse(storedUser));
     if (storedFavorites) setFavorites(JSON.parse(storedFavorites));
+    if (storedSavedItems) setSavedItems(JSON.parse(storedSavedItems));
     if (storedCollections) setCollections(JSON.parse(storedCollections));
+    if (storedAdminCollections) setAdminCollections(JSON.parse(storedAdminCollections));
   }, []);
 
   return (
@@ -82,9 +164,18 @@ export const AuthProvider = ({ children }) => {
       login, 
       logout, 
       favorites, 
-      toggleFavorite, 
+      toggleFavorite,
+      savedItems,
+      toggleSaved,
       collections, 
-      addToCollection 
+      createUserCollection,
+      deleteUserCollection,
+      addItemToUserCollection,
+      removeItemFromUserCollection,
+      adminCollections,
+      createAdminCollection,
+      deleteAdminCollection,
+      updateAdminCollection
     }}>
       {children}
     </AuthContext.Provider>

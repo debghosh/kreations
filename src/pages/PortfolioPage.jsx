@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Grid, List, Heart } from 'lucide-react';
+import { Search, Grid, List, Heart, Bookmark, Layers, X, Plus } from 'lucide-react';
 import { getAllItems } from '../data/products';
 import { useAuth } from '../context/AuthContext';
 
@@ -8,7 +8,7 @@ const PortfolioPage = ({ setSelectedItem, setCurrentView }) => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [viewMode, setViewMode] = useState('grid');
   const [sortBy, setSortBy] = useState('popularity');
-  const { user, favorites, toggleFavorite } = useAuth();
+  const { user, favorites, toggleFavorite, savedItems, toggleSaved, collections, addItemToUserCollection } = useAuth();
 
   const allItems = getAllItems();
 
@@ -125,6 +125,10 @@ const PortfolioPage = ({ setSelectedItem, setCurrentView }) => {
                 user={user}
                 favorites={favorites}
                 toggleFavorite={toggleFavorite}
+                savedItems={savedItems}
+                toggleSaved={toggleSaved}
+                collections={collections}
+                addItemToUserCollection={addItemToUserCollection}
               />
             ))}
           </div>
@@ -141,6 +145,10 @@ const PortfolioPage = ({ setSelectedItem, setCurrentView }) => {
                 user={user}
                 favorites={favorites}
                 toggleFavorite={toggleFavorite}
+                savedItems={savedItems}
+                toggleSaved={toggleSaved}
+                collections={collections}
+                addItemToUserCollection={addItemToUserCollection}
               />
             ))}
           </div>
@@ -150,116 +158,311 @@ const PortfolioPage = ({ setSelectedItem, setCurrentView }) => {
   );
 };
 
-const PortfolioCard = ({ item, onClick, user, favorites, toggleFavorite }) => (
-  <div className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 cursor-pointer">
-    <div className="relative h-72 overflow-hidden" onClick={onClick}>
-      <img
-        src={item.image}
-        alt={item.title}
-        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-      />
-      {!item.inStock && (
-        <div className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
-          Sold Out
-        </div>
-      )}
-      {user && (
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            toggleFavorite(item.id);
-          }}
-          className="absolute top-4 right-4 p-2 bg-white/90 rounded-full hover:bg-white transition-colors"
-        >
-          <Heart
-            className={`w-5 h-5 ${
-              favorites.includes(item.id) 
-                ? 'fill-red-500 text-red-500' 
-                : 'text-gray-600'
-            }`}
-          />
-        </button>
-      )}
-    </div>
-    <div className="p-6" onClick={onClick}>
-      <div className="flex items-start justify-between mb-2">
-        <h3 className="text-xl font-bold text-gray-900 group-hover:text-amber-600 transition-colors flex-1">
-          {item.title}
-        </h3>
-        <span className="text-2xl font-bold text-amber-600 ml-4">${item.price}</span>
-      </div>
-      <p className="text-gray-600 text-sm mb-4 line-clamp-2">{item.description}</p>
-      <div className="flex flex-wrap gap-2">
-        {item.tags.map(tag => (
-          <span key={tag} className="px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-medium">
-            {tag}
-          </span>
-        ))}
-      </div>
-    </div>
-  </div>
-);
+const PortfolioCard = ({ item, onClick, user, favorites, toggleFavorite, savedItems, toggleSaved, collections, addItemToUserCollection }) => {
+  const [showCollectionModal, setShowCollectionModal] = useState(false);
 
-const PortfolioListItem = ({ item, onClick, user, favorites, toggleFavorite }) => (
-  <div
-    onClick={onClick}
-    className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all cursor-pointer overflow-hidden group"
-  >
-    <div className="flex flex-col md:flex-row">
-      <div className="relative md:w-64 h-48 md:h-auto flex-shrink-0 overflow-hidden">
-        <img
-          src={item.image}
-          alt={item.title}
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-        />
-        {!item.inStock && (
-          <div className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
-            Sold Out
-          </div>
-        )}
-      </div>
-      <div className="flex-1 p-6">
-        <div className="flex items-start justify-between mb-2">
-          <h3 className="text-2xl font-bold text-gray-900 group-hover:text-amber-600 transition-colors">
-            {item.title}
-          </h3>
-          <div className="flex items-center gap-4">
-            <span className="text-3xl font-bold text-amber-600">${item.price}</span>
-            {user && (
+  return (
+    <>
+      <div className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 cursor-pointer">
+        <div className="relative h-72 overflow-hidden" onClick={onClick}>
+          <img
+            src={item.image}
+            alt={item.title}
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+          />
+          {!item.inStock && (
+            <div className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
+              Sold Out
+            </div>
+          )}
+          {user && (
+            <div className="absolute top-4 right-4 flex gap-2">
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   toggleFavorite(item.id);
                 }}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                className="p-2 bg-white/90 rounded-full hover:bg-white transition-colors shadow-lg"
+                title="Favorite"
               >
                 <Heart
-                  className={`w-6 h-6 ${
+                  className={`w-5 h-5 ${
                     favorites.includes(item.id) 
                       ? 'fill-red-500 text-red-500' 
                       : 'text-gray-600'
                   }`}
                 />
               </button>
-            )}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleSaved(item.id);
+                }}
+                className="p-2 bg-white/90 rounded-full hover:bg-white transition-colors shadow-lg"
+                title="Save for later"
+              >
+                <Bookmark
+                  className={`w-5 h-5 ${
+                    savedItems.includes(item.id)
+                      ? 'fill-blue-500 text-blue-500'
+                      : 'text-gray-600'
+                  }`}
+                />
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowCollectionModal(true);
+                }}
+                className="p-2 bg-white/90 rounded-full hover:bg-white transition-colors shadow-lg"
+                title="Add to collection"
+              >
+                <Layers className="w-5 h-5 text-gray-600" />
+              </button>
+            </div>
+          )}
+        </div>
+        <div className="p-6" onClick={onClick}>
+          <div className="flex items-start justify-between mb-2">
+            <h3 className="text-xl font-bold text-gray-900 group-hover:text-amber-600 transition-colors flex-1">
+              {item.title}
+            </h3>
+            <span className="text-2xl font-bold text-amber-600 ml-4">${item.price}</span>
+          </div>
+          <p className="text-gray-600 text-sm mb-4 line-clamp-2">{item.description}</p>
+          <div className="flex flex-wrap gap-2">
+            {item.tags.map(tag => (
+              <span key={tag} className="px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-medium">
+                {tag}
+              </span>
+            ))}
           </div>
         </div>
-        <p className="text-gray-600 mb-4">{item.description}</p>
-        <div className="flex flex-wrap gap-2 mb-4">
-          {item.tags.map(tag => (
-            <span key={tag} className="px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-medium">
-              {tag}
-            </span>
-          ))}
-        </div>
-        <div className="flex items-center gap-4 text-sm text-gray-600">
-          <span>{item.category === 'wax' ? '🕯️ Wax' : '💎 Resin'}</span>
-          <span>•</span>
-          <span>{item.dimensions}</span>
+      </div>
+
+      {/* Add to Collection Modal */}
+      {showCollectionModal && (
+        <AddToCollectionModal
+          item={item}
+          collections={collections}
+          onAdd={(collectionId) => {
+            addItemToUserCollection(collectionId, item.id);
+            setShowCollectionModal(false);
+          }}
+          onClose={() => setShowCollectionModal(false)}
+        />
+      )}
+    </>
+  );
+};
+
+const PortfolioListItem = ({ item, onClick, user, favorites, toggleFavorite, savedItems, toggleSaved, collections, addItemToUserCollection }) => {
+  const [showCollectionModal, setShowCollectionModal] = useState(false);
+
+  return (
+    <>
+      <div
+        onClick={onClick}
+        className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all cursor-pointer overflow-hidden group"
+      >
+        <div className="flex flex-col md:flex-row">
+          <div className="relative md:w-64 h-48 md:h-auto flex-shrink-0 overflow-hidden">
+            <img
+              src={item.image}
+              alt={item.title}
+              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+            />
+            {!item.inStock && (
+              <div className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                Sold Out
+              </div>
+            )}
+          </div>
+          <div className="flex-1 p-6">
+            <div className="flex items-start justify-between mb-2">
+              <h3 className="text-2xl font-bold text-gray-900 group-hover:text-amber-600 transition-colors">
+                {item.title}
+              </h3>
+              <div className="flex items-center gap-4">
+                <span className="text-3xl font-bold text-amber-600">${item.price}</span>
+                {user && (
+                  <div className="flex gap-2">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleFavorite(item.id);
+                      }}
+                      className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                      title="Favorite"
+                    >
+                      <Heart
+                        className={`w-6 h-6 ${
+                          favorites.includes(item.id) 
+                            ? 'fill-red-500 text-red-500' 
+                            : 'text-gray-600'
+                        }`}
+                      />
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleSaved(item.id);
+                      }}
+                      className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                      title="Save for later"
+                    >
+                      <Bookmark
+                        className={`w-6 h-6 ${
+                          savedItems.includes(item.id)
+                            ? 'fill-blue-500 text-blue-500'
+                            : 'text-gray-600'
+                        }`}
+                      />
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setShowCollectionModal(true);
+                      }}
+                      className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                      title="Add to collection"
+                    >
+                      <Layers className="w-6 h-6 text-gray-600" />
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+            <p className="text-gray-600 mb-4">{item.description}</p>
+            <div className="flex flex-wrap gap-2 mb-4">
+              {item.tags.map(tag => (
+                <span key={tag} className="px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-medium">
+                  {tag}
+                </span>
+              ))}
+            </div>
+            <div className="flex items-center gap-4 text-sm text-gray-600">
+              <span>{item.category === 'wax' ? '🕯️ Wax' : '💎 Resin'}</span>
+              <span>•</span>
+              <span>{item.dimensions}</span>
+            </div>
+          </div>
         </div>
       </div>
+
+      {/* Add to Collection Modal */}
+      {showCollectionModal && (
+        <AddToCollectionModal
+          item={item}
+          collections={collections}
+          onAdd={(collectionId) => {
+            addItemToUserCollection(collectionId, item.id);
+            setShowCollectionModal(false);
+          }}
+          onClose={() => setShowCollectionModal(false)}
+        />
+      )}
+    </>
+  );
+};
+
+// Add to Collection Modal Component
+const AddToCollectionModal = ({ item, collections, onAdd, onClose }) => {
+  const { createUserCollection } = useAuth();
+  const [showCreateNew, setShowCreateNew] = useState(false);
+  const [newCollectionName, setNewCollectionName] = useState('');
+
+  const handleCreateAndAdd = (e) => {
+    e.preventDefault();
+    if (newCollectionName.trim()) {
+      const newCollection = createUserCollection(newCollectionName.trim(), [item.id]);
+      setNewCollectionName('');
+      setShowCreateNew(false);
+      onClose();
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-[9999]" onClick={onClose}>
+      <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8" onClick={(e) => e.stopPropagation()}>
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold">Add to Collection</h2>
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {showCreateNew ? (
+          <form onSubmit={handleCreateAndAdd}>
+            <input
+              type="text"
+              value={newCollectionName}
+              onChange={(e) => setNewCollectionName(e.target.value)}
+              placeholder="Collection name"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 outline-none mb-4"
+              autoFocus
+            />
+            <div className="flex gap-4">
+              <button
+                type="button"
+                onClick={() => setShowCreateNew(false)}
+                className="flex-1 px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50"
+              >
+                Back
+              </button>
+              <button
+                type="submit"
+                className="flex-1 px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg hover:shadow-lg"
+                disabled={!newCollectionName.trim()}
+              >
+                Create & Add
+              </button>
+            </div>
+          </form>
+        ) : (
+          <>
+            {collections.length === 0 ? (
+              <div className="text-center py-8">
+                <Layers className="w-16 h-16 mx-auto mb-4 text-gray-300" />
+                <p className="text-gray-600 mb-4">You don't have any collections yet.</p>
+                <button
+                  onClick={() => setShowCreateNew(true)}
+                  className="px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg hover:shadow-lg"
+                >
+                  Create Your First Collection
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {collections.map(collection => (
+                  <button
+                    key={collection.id}
+                    onClick={() => onAdd(collection.id)}
+                    className="w-full p-4 border-2 border-gray-200 rounded-lg hover:border-amber-500 hover:bg-amber-50 transition-all text-left"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="font-semibold">{collection.name}</h3>
+                        <p className="text-sm text-gray-600">{collection.items.length} items</p>
+                      </div>
+                      <Layers className="w-5 h-5 text-amber-600" />
+                    </div>
+                  </button>
+                ))}
+                <button
+                  onClick={() => setShowCreateNew(true)}
+                  className="w-full p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-amber-500 hover:bg-amber-50 transition-all text-center text-gray-600 hover:text-amber-600"
+                >
+                  <Plus className="w-5 h-5 mx-auto mb-1" />
+                  Create New Collection
+                </button>
+              </div>
+            )}
+          </>
+        )}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default PortfolioPage;
