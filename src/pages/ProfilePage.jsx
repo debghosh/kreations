@@ -477,18 +477,18 @@ const ItemCard = ({ item, onView, onToggleFavorite, isFavorited, onToggleSaved, 
             <button
               onClick={onToggleFavorite}
               className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-              title="Remove from favorites"
+              title={isFavorited ? "Remove from favorites" : "Add to favorites"}
             >
-              <Heart className="w-5 h-5 fill-red-500 text-red-500" />
+              <Heart className={`w-5 h-5 ${isFavorited ? 'fill-red-500 text-red-500' : 'text-gray-600'}`} />
             </button>
           )}
           {onToggleSaved && (
             <button
               onClick={onToggleSaved}
               className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-              title="Remove from saved"
+              title={isSaved ? "Remove from saved" : "Save for later"}
             >
-              <Bookmark className="w-5 h-5 fill-blue-500 text-blue-500" />
+              <Bookmark className={`w-5 h-5 ${isSaved ? 'fill-blue-500 text-blue-500' : 'text-gray-600'}`} />
             </button>
           )}
           <button
