@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { ChevronRight, Star, Users, TrendingUp, ShoppingBag, Heart, Bookmark, Layers, X, Plus } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ChevronRight, ChevronLeft, Star, Users, TrendingUp, ShoppingBag, Heart, Bookmark, Layers, X, Plus } from 'lucide-react';
 import { getFeaturedItems } from '../data/products';
 import { SAMPLE_ITEMS } from '../data/products';
 import { useAuth } from '../context/AuthContext';
@@ -7,26 +7,50 @@ import { useAuth } from '../context/AuthContext';
 const HomePage = ({ setCurrentView, setSelectedCategory, setSelectedItem }) => {
   const featuredItems = getFeaturedItems();
   const { user, favorites, toggleFavorite, savedItems, toggleSaved, collections, addItemToUserCollection } = useAuth();
+  
+  // Carousel state
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const carouselImages = [
+    'https://images.unsplash.com/photo-1602874801006-90c27c6e0ca5?w=1920&q=80',
+    'https://images.unsplash.com/photo-1603006905003-be475563bc59?w=1920&q=80',
+    'https://images.unsplash.com/photo-1618172193622-ae2d025f4032?w=1920&q=80',
+    'https://images.unsplash.com/photo-1621784564315-d2a91e3bb134?w=1920&q=80',
+    'https://images.unsplash.com/photo-1589010588553-46e8e7c21788?w=1920&q=80'
+  ];
+
+  // Auto-rotate carousel
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % carouselImages.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="pt-20">
-      {/* Hero Section */}
+      {/* Hero Section with Carousel */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-amber-100 via-orange-50 to-amber-50">
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-20 left-20 w-72 h-72 bg-amber-500 rounded-full blur-3xl animate-pulse"></div>
-            <div className="absolute bottom-20 right-20 w-96 h-96 bg-orange-500 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        {/* Carousel Background */}
+        {carouselImages.map((image, index) => (
+          <div
+            key={index}
+            className={`absolute inset-0 transition-opacity duration-1000 ${
+              index === currentSlide ? 'opacity-100' : 'opacity-0'
+            }`}
+          >
+            <img src={image} alt={`Slide ${index + 1}`} className="w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/40" />
           </div>
-        </div>
-
-        <div className="relative z-10 text-center px-4 max-w-5xl mx-auto">
-          <h1 className="text-6xl md:text-8xl font-bold mb-6 bg-gradient-to-r from-amber-600 via-orange-600 to-amber-600 bg-clip-text text-transparent animate-fade-in leading-tight">
+        ))}
+        {/* Hero Content */}
+        <div className="relative z-10 text-center px-4 max-w-5xl mx-auto -mt-20">
+          <h1 className="text-6xl md:text-8xl font-bold mb-6 text-white drop-shadow-2xl animate-fade-in leading-tight">
             Handcrafted
             <br />
             With Soul
           </h1>
-          <p className="text-xl md:text-2xl text-gray-700 mb-12 max-w-3xl mx-auto leading-relaxed">
-            Discover unique wax and resin artworks that transform spaces into sanctuaries of beauty and warmth
+          <p className="text-xl md:text-2xl text-white drop-shadow-lg mb-12 max-w-3xl mx-auto leading-relaxed">
+            Transform your spaces with unique resin and wax collections
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
@@ -45,6 +69,34 @@ const HomePage = ({ setCurrentView, setSelectedCategory, setSelectedItem }) => {
           </div>
         </div>
 
+        {/* Carousel Controls */}
+        <button
+          onClick={() => setCurrentSlide((prev) => prev === 0 ? carouselImages.length - 1 : prev - 1)}
+          className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-all"
+        >
+          <ChevronLeft className="w-6 h-6 text-white" />
+        </button>
+        <button
+          onClick={() => setCurrentSlide((prev) => (prev + 1) % carouselImages.length)}
+          className="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-all"
+        >
+          <ChevronRight className="w-6 h-6 text-white" />
+        </button>
+
+        {/* Carousel Dots */}
+        <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-20 flex space-x-3">
+          {carouselImages.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentSlide(index)}
+              className={`transition-all ${
+                index === currentSlide ? 'w-12 h-3 bg-white' : 'w-3 h-3 bg-white/50 hover:bg-white/70'
+              } rounded-full`}
+            />
+          ))}
+        </div>
+
+        {/* Scroll Indicator */}
         <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
           <div className="w-6 h-10 border-2 border-amber-600 rounded-full flex justify-center">
             <div className="w-1.5 h-3 bg-amber-600 rounded-full mt-2 animate-pulse"></div>
@@ -188,7 +240,7 @@ const FeaturedCard = ({ item, index, onClick, user, favorites, toggleFavorite, s
                   toggleSaved(item.id);
                 }}
                 className="p-2 bg-white/90 rounded-full hover:bg-white transition-colors shadow-lg"
-                title="Save for later"
+                title="Save"
               >
                 <Bookmark
                   className={`w-5 h-5 ${
