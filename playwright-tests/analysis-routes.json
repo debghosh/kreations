@@ -1,0 +1,16 @@
+{
+  "timestamp": "2025-10-28T00:14:15.195Z",
+  "routes": [
+    "/",
+    "/portfolio",
+    "/profile",
+    "/admin",
+    "/login",
+    "/about",
+    "/contact",
+    "/collections",
+    "/favorites",
+    "/saved"
+  ],
+  "totalRoutes": 10
+}

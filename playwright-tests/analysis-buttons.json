@@ -1,0 +1,146 @@
+[
+  {
+    "index": 1,
+    "text": "Home",
+    "hasIcon": false,
+    "dataTestId": null,
+    "ariaLabel": null,
+    "classes": "flex items-center space-x-2 px-4 py-2 rounded-full font-medium transition-all bg-gradient-to-r from-"
+  },
+  {
+    "index": 2,
+    "text": "Portfolio",
+    "hasIcon": false,
+    "dataTestId": null,
+    "ariaLabel": null,
+    "classes": "flex items-center space-x-2 px-4 py-2 rounded-full font-medium transition-all text-gray-700 hover:bg"
+  },
+  {
+    "index": 3,
+    "text": "Login",
+    "hasIcon": false,
+    "dataTestId": null,
+    "ariaLabel": null,
+    "classes": "flex items-center space-x-2 px-6 py-2 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 tex"
+  },
+  {
+    "index": 4,
+    "text": "[no text]",
+    "hasIcon": false,
+    "dataTestId": null,
+    "ariaLabel": null,
+    "classes": "md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+  },
+  {
+    "index": 5,
+    "text": "Explore Collections",
+    "hasIcon": false,
+    "dataTestId": null,
+    "ariaLabel": null,
+    "classes": "group px-8 py-4 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-full font-semibold "
+  },
+  {
+    "index": 6,
+    "text": "View Portfolio",
+    "hasIcon": false,
+    "dataTestId": null,
+    "ariaLabel": null,
+    "classes": "px-8 py-4 bg-white text-amber-600 rounded-full font-semibold text-lg hover:shadow-xl transform hover"
+  },
+  {
+    "index": 7,
+    "text": "Home",
+    "hasIcon": false,
+    "dataTestId": null,
+    "ariaLabel": null,
+    "classes": "block text-gray-400 hover:text-amber-400 transition-colors text-sm"
+  },
+  {
+    "index": 8,
+    "text": "Portfolio",
+    "hasIcon": false,
+    "dataTestId": null,
+    "ariaLabel": null,
+    "classes": "block text-gray-400 hover:text-amber-400 transition-colors text-sm"
+  },
+  {
+    "index": 9,
+    "text": "About Us",
+    "hasIcon": false,
+    "dataTestId": null,
+    "ariaLabel": null,
+    "classes": "block text-gray-400 hover:text-amber-400 transition-colors text-sm"
+  },
+  {
+    "index": 10,
+    "text": "Contact",
+    "hasIcon": false,
+    "dataTestId": null,
+    "ariaLabel": null,
+    "classes": "block text-gray-400 hover:text-amber-400 transition-colors text-sm"
+  },
+  {
+    "index": 11,
+    "text": "Wax Creations",
+    "hasIcon": false,
+    "dataTestId": null,
+    "ariaLabel": null,
+    "classes": "block text-gray-400 hover:text-amber-400 transition-colors text-sm"
+  },
+  {
+    "index": 12,
+    "text": "Resin Artworks",
+    "hasIcon": false,
+    "dataTestId": null,
+    "ariaLabel": null,
+    "classes": "block text-gray-400 hover:text-amber-400 transition-colors text-sm"
+  },
+  {
+    "index": 13,
+    "text": "Custom Orders",
+    "hasIcon": false,
+    "dataTestId": null,
+    "ariaLabel": null,
+    "classes": "block text-gray-400 hover:text-amber-400 transition-colors text-sm"
+  },
+  {
+    "index": 14,
+    "text": "Gift Sets",
+    "hasIcon": false,
+    "dataTestId": null,
+    "ariaLabel": null,
+    "classes": "block text-gray-400 hover:text-amber-400 transition-colors text-sm"
+  },
+  {
+    "index": 15,
+    "text": "Instagram",
+    "hasIcon": false,
+    "dataTestId": null,
+    "ariaLabel": null,
+    "classes": "block text-gray-400 hover:text-amber-400 transition-colors text-sm"
+  },
+  {
+    "index": 16,
+    "text": "Pinterest",
+    "hasIcon": false,
+    "dataTestId": null,
+    "ariaLabel": null,
+    "classes": "block text-gray-400 hover:text-amber-400 transition-colors text-sm"
+  },
+  {
+    "index": 17,
+    "text": "Facebook",
+    "hasIcon": false,
+    "dataTestId": null,
+    "ariaLabel": null,
+    "classes": "block text-gray-400 hover:text-amber-400 transition-colors text-sm"
+  },
+  {
+    "index": 18,
+    "text": "Newsletter",
+    "hasIcon": false,
+    "dataTestId": null,
+    "ariaLabel": null,
+    "classes": "block text-gray-400 hover:text-amber-400 transition-colors text-sm"
+  }
+]

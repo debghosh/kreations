@@ -1,0 +1,15 @@
+{
+  "homepage": {
+    "heartIcons": 0,
+    "bookmarkIcons": 0,
+    "collectionIcons": 0,
+    "favoriteButtons": 0,
+    "saveButtons": 0,
+    "collectionButtons": 0
+  },
+  "portfolio": {
+    "heartIcons": 0,
+    "bookmarkIcons": 0,
+    "collectionIcons": 0
+  }
+}

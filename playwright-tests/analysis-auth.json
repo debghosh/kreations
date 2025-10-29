@@ -1,0 +1,9 @@
+{
+  "loginButton": 1,
+  "loginForm": 0,
+  "emailInput": 0,
+  "passwordInput": 0,
+  "logoutButton": 0,
+  "userProfile": 0,
+  "registerButton": 0
+}

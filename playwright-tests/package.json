@@ -1,0 +1,45 @@
+{
+  "name": "artisan-crafts-e2e-tests",
+  "version": "1.0.0",
+  "description": "Comprehensive Playwright E2E test suite for Artisan Crafts e-commerce platform",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "test:ui": "playwright test --ui",
+    "test:chromium": "playwright test --project=chromium",
+    "test:firefox": "playwright test --project=firefox",
+    "test:webkit": "playwright test --project=webkit",
+    "test:mobile": "playwright test --project=mobile-chrome --project=mobile-safari",
+    "test:critical": "playwright test --grep @P0",
+    "test:high": "playwright test --grep \"@P0|@P1\"",
+    "test:auth": "playwright test tests/e2e/01-auth.spec.js",
+    "test:navigation": "playwright test tests/e2e/02-navigation.spec.js",
+    "test:favorites": "playwright test tests/e2e/03-favorites.spec.js",
+    "test:saved": "playwright test tests/e2e/04-saved-items.spec.js",
+    "test:collections": "playwright test tests/e2e/05-collections.spec.js",
+    "test:admin": "playwright test tests/e2e/06-admin-products.spec.js tests/e2e/07-admin-collections.spec.js tests/e2e/08-admin-homepage.spec.js",
+    "test:smoke": "playwright test --grep @smoke",
+    "test:regression": "playwright test --grep \"@P0|@P1\"",
+    "report": "playwright show-report",
+    "report:open": "playwright show-report playwright-report",
+    "codegen": "playwright codegen http://localhost:5173",
+    "install": "playwright install --with-deps"
+  },
+  "keywords": [
+    "playwright",
+    "e2e",
+    "testing",
+    "automation",
+    "react",
+    "ecommerce"
+  ],
+  "author": "Artisan Crafts Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.40.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
